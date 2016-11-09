@@ -39,11 +39,14 @@ class DB_Mysql_Test extends DB_Mysql{
 $query = "SELECT id, teacher FROM lessons";
 $dbh = new DB_Mysql_Test;
 $stmt = $dbh->prepare($query)->execute();
-$result = $stmt->fetch();
-while($result->next()){
-    echo $result->id." ".$result->teacher;
+//$result = $stmt->fetch();
+//while($result->next()){
+//    echo $result->id." ".$result->teacher."<br>";
+//}
+foreach ($stmt as $var) {
+    echo $var['id'].":".$var['teacher']."<br>";
+//    print_r($var);
 }
-
 //$blog = new Weblog_Std;
 //$blog2 = new Weblog;
 //$blog2->setDB(new DB_Mysql("root", "smishin", "localhost", "web"));

@@ -35,7 +35,7 @@ class DB_Mysql{
         else if (!is_resource($ret)) {
             return TRUE;
         } else {
-            $stmt =  new DB_MysqlStatement($this->dbh, $query);
+            $stmt =  new DB_Statement($this->dbh, $query);
             $stmt->result = $ret;
             return $stmt;
         }
@@ -44,15 +44,18 @@ class DB_Mysql{
         if(!$this->dbh){
             $this->connect();
         }
-        return new DB_MysqlStatement($this->dbh, $query);
+        return new DB_Statement($this->dbh, $query);
     }
 }
-class DB_MysqlStatement{
+class DB_Statement implements IteratorAggregate{
     public $result;
     protected $binds;
     protected $query;
     protected $dbh;
     
+    function getIterator() {
+        return new DB_Result($this);
+    }
     public function __construct($dbh, $query) {
         $this->query = $query;
         $this->dbh = $dbh;
@@ -81,7 +84,6 @@ class DB_MysqlStatement{
         foreach($binds as $index => $name){
             $this->binds[$index + 1] = $name;
         }
-//        $cnt = count($binds);
         $query = $this->query;
         foreach ($this->binds as $ph => $pv) {
             $query = str_replace(":$ph", "'".mysql_escape_string($pv)."'", 
@@ -93,9 +95,9 @@ class DB_MysqlStatement{
         }
         return $this;
     }
-    public function fetch() {
-        return new DB_Result($this);
-    }
+//    public function fetch() {
+//        return new DB_Result($this);
+//    }
 }
 
 ?>
