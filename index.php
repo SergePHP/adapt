@@ -36,6 +36,16 @@ class DB_Mysql_Test extends DB_Mysql{
     public function __construct() { }
 }
 
+function fact($n){
+    if($n == 0 || $n == 1){
+        return $n;
+    } else {
+        return $n * fact($n - 1); 
+    }
+}
+//echo fact(100);
+//exit;
+
 $query = "SELECT id, teacher FROM lessons";
 $dbh = new DB_Mysql_Test;
 $stmt = $dbh->prepare($query)->execute();

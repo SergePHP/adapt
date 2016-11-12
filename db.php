@@ -18,10 +18,10 @@ class DB_Mysql{
     protected function connect(){
         $this->dbh = mysql_pconnect($this->dbhost, $this->user, $this->pass);
         if(!is_resource($this->dbh)){
-            throw new Exception;
+            throw new MysqlException;
         }
         if(!mysql_select_db($this->dbname, $this->dbh)){
-            throw new Exception;
+            throw new MysqlException;
         }
     }
     public function execute($query) {
@@ -30,7 +30,7 @@ class DB_Mysql{
         }
         $ret = mysql_query($query, $this->dbh);
         if(!$ret){
-            throw new Exception;
+            throw new MysqlException;
         }
         else if (!is_resource($ret)) {
             return TRUE;
@@ -60,12 +60,12 @@ class DB_Statement implements IteratorAggregate{
         $this->query = $query;
         $this->dbh = $dbh;
         if(!is_resource($dbh)){
-            throw new Exception("Некорректное соединение с базой данных");
+            throw new MysqlException("Некорректное соединение с базой данных");
         }
     }
     public function fetch_row(){
         if(!$this->result){
-            throw new Exception("Запрос не выполнен");
+            throw new MysqlException("Запрос не выполнен");
         }
         return mysql_fetch_row($this->result);
     }
@@ -98,6 +98,18 @@ class DB_Statement implements IteratorAggregate{
 //    public function fetch() {
 //        return new DB_Result($this);
 //    }
+}
+class MysqlException extends Exception{
+    public $backtrace;
+    public function __construct($message=false, $code=false) {
+        if(!$message){
+            $this->message = mysql_error();
+        }
+        if(!$code){
+            $this->code = mysql_error();
+        }
+        $this->backtrace = debug_backtrace();
+    }
 }
 
 ?>
